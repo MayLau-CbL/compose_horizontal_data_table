@@ -1,28 +1,24 @@
 package cbl.tools.compose.horizontaldatatable
 
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cbl.tools.compose.horizontaldatatable.components.Cells
 
 @Composable
-fun SimpleHorizontalDataTablePage() {
+fun SimpleHorizontalDataTablePage(cells: Cells) {
     HorizontalDataTable(
-        fixedColumnWidth = 100.dp,
-        biDirectionTableWidth = 500.dp,
-        biDirectionTableGriCells = GridCells.Fixed(5),
-        columnCount = 6,
-        rowCount = 100,
-        cellHeight = 36.dp,
+        fixedColumnWidth = cells.fixedColumnWidth(),
+        biDirectionTableWidth = cells.biDirectionColumnWidth(),
+        biDirectionTableGriCells = GridCells.Fixed(cells.totalColumns() - 1),
+        columnCount = cells.totalColumns(),
+        rowCount = cells.totalRows(),
+        cellHeight = 52.dp,
     ) { colIndex, rowIndex ->
-        Text(
-            modifier = Modifier
-                .height(36.dp)
-                .width(100.dp),
-            text = "($colIndex, $rowIndex)"
-        )
+        if (colIndex == 0) {
+            cells.fixedColumnCells(rowIndex = rowIndex)
+        } else {
+            cells.BiDirectionCells(colIndex = colIndex, rowIndex = rowIndex)
+        }
     }
 }

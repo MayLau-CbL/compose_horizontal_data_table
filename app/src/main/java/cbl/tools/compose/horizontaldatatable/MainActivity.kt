@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import cbl.tools.compose.horizontaldatatable.components.DemoCells
 import cbl.tools.compose.horizontaldatatable.ui.theme.HorizontalDataTableTheme
 
 class MainActivity : ComponentActivity() {
@@ -54,10 +55,10 @@ class MainActivity : ComponentActivity() {
                                     HomePage(navController = navController)
                                 }
                                 composable("simple_table") {
-                                    SimpleHorizontalDataTablePage()
+                                    SimpleHorizontalDataTablePage(cells = DemoCells())
                                 }
                                 composable("refresh_table") {
-                                    PullToRefreshHorizontalDataTablePage()
+                                    PullToRefreshHorizontalDataTablePage(cells = DemoCells())
                                 }
                             }
                         }
