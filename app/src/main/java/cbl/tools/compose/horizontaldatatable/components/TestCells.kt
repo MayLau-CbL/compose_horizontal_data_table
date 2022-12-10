@@ -23,7 +23,12 @@ class TestCells : Cells {
     }
 
     @Composable
-    override fun fixedColumnCells(rowIndex: Int) {
+    override fun FixedHeaders(colIndex: Int) {
+        Text("Coor")
+    }
+
+    @Composable
+    override fun FixedColumnCells(rowIndex: Int) {
         Text("(0, $rowIndex)")
     }
 

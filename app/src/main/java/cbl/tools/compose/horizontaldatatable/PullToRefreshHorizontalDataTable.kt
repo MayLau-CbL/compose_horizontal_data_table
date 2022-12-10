@@ -1,6 +1,5 @@
 package cbl.tools.compose.horizontaldatatable
 
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -29,13 +28,16 @@ fun PullToRefreshHorizontalDataTablePage(cells: Cells) {
         },
         fixedColumnWidth = cells.fixedColumnWidth(),
         biDirectionTableWidth = cells.biDirectionColumnWidth(),
-        biDirectionTableGriCells = GridCells.Fixed(cells.totalColumns() - 1),
+        headerHeight = 52.dp,
+        fixedHeaders = { colIndex ->
+            cells.FixedHeaders(colIndex = colIndex)
+        },
         columnCount = cells.totalColumns(),
         rowCount = cells.totalRows(),
         cellHeight = 52.dp,
     ) { colIndex, rowIndex ->
         if (colIndex == 0) {
-            cells.fixedColumnCells(rowIndex = rowIndex)
+            cells.FixedColumnCells(rowIndex = rowIndex)
         } else {
             cells.BiDirectionCells(colIndex = colIndex, rowIndex = rowIndex)
         }

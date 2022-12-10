@@ -6,10 +6,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -32,7 +28,9 @@ fun HorizontalDataTable(
     fixedColumnModifier: Modifier = Modifier,
     biDirectionTableWidth: Dp,
     biDirectionTableModifier: Modifier = Modifier,
-    biDirectionTableGriCells: GridCells? = null,
+//    biDirectionTableGriCells: GridCells? = null,
+    headerHeight: Dp? = null,
+    fixedHeaders: (@Composable (colIndex: Int) -> Unit)? = null,
     rowCount: Int,
     columnCount: Int,
     cellHeight: Dp,
@@ -40,55 +38,91 @@ fun HorizontalDataTable(
 ) {
     val horizontalScrollState = rememberScrollState()
 
-    val lazyColumnState = rememberLazyListState()
-    val lazyGridState = rememberLazyGridState()
+    val lazyFixedColumnState = rememberLazyListState()
+    val lazyBiDirectionColumnState = rememberLazyListState()
 
     ScrollSyncNotification(
-        columnCount = columnCount,
-        lazyListState = lazyColumnState,
-        lazyGridState = lazyGridState
+        lazyFixedColumnState = lazyFixedColumnState,
+        lazyBiDirectionColumnState = lazyBiDirectionColumnState
     )
 
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
         Row {
-            LazyColumn(
-                state = lazyColumnState,
-                modifier = fixedColumnModifier
-                    .width(fixedColumnWidth),
-                content = {
-                    items(count = rowCount) { rowIndex ->
-                        Box(
-                            modifier = Modifier
-                                .height(cellHeight),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            cells(0, rowIndex)
-                        }
+            Column {
+                safeLet(headerHeight, fixedHeaders) { headerHeight, fixedHeaders ->
+                    Box(
+                        modifier = Modifier.height(headerHeight),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        fixedHeaders(0)
                     }
                 }
-            )
-            Box(
+                LazyColumn(
+                    state = lazyFixedColumnState,
+                    modifier = fixedColumnModifier
+                        .fillMaxHeight()
+                        .width(fixedColumnWidth),
+                    contentPadding = PaddingValues(0.dp),
+                    content = {
+                        items(count = rowCount) { rowIndex ->
+                            Box(
+                                modifier = Modifier
+                                    .height(cellHeight),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                cells(0, rowIndex)
+                            }
+                        }
+                    }
+                )
+            }
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(horizontalScrollState)
             ) {
-                LazyVerticalGrid(
-                    state = lazyGridState,
-                    modifier = biDirectionTableModifier
-                        .width(biDirectionTableWidth),
-                    columns = biDirectionTableGriCells
-                        ?: GridCells.Fixed(count = (columnCount - 1)),
-                    content = {
-                        items(count = rowCount * (columnCount - 1)) { index ->
-                            val colIndex = index % (columnCount - 1)
-                            val rowIndex = (index - colIndex) / (columnCount - 1)
+                safeLet(headerHeight, fixedHeaders) { headerHeight, fixedHeaders ->
+                    Row(
+                        modifier = Modifier
+                            .height(headerHeight)
+                            .width(biDirectionTableWidth)
+                    ) {
+                        for (colIndex in 1 until columnCount) {
                             Box(
-                                modifier = Modifier.height(cellHeight),
+                                modifier = Modifier
+                                    .height(headerHeight),
                                 contentAlignment = Alignment.Center,
                             ) {
-                                cells(colIndex + 1, rowIndex)
+                                fixedHeaders(colIndex)
+                            }
+                        }
+                    }
+                }
+                LazyColumn(
+                    state = lazyBiDirectionColumnState,
+                    modifier = biDirectionTableModifier
+                        .fillMaxHeight()
+                        .width(biDirectionTableWidth),
+                    contentPadding = PaddingValues(0.dp),
+                    content = {
+                        items(count = rowCount) { rowIndex ->
+                            Row(
+                                modifier = Modifier
+                                    .height(cellHeight)
+                                    .width(biDirectionTableWidth)
+                            ) {
+                                for (colIndex in 1 until columnCount) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(cellHeight)
+                                            .wrapContentWidth(),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        cells(colIndex, rowIndex)
+                                    }
+                                }
                             }
                         }
                     }
@@ -114,7 +148,8 @@ fun PullToRefreshHorizontalDataTable(
     fixedColumnModifier: Modifier = Modifier,
     biDirectionTableWidth: Dp,
     biDirectionTableModifier: Modifier = Modifier,
-    biDirectionTableGriCells: GridCells? = null,
+    headerHeight: Dp? = null,
+    fixedHeaders: (@Composable (colIndex: Int) -> Unit)? = null,
     rowCount: Int,
     columnCount: Int,
     cellHeight: Dp,
@@ -137,42 +172,41 @@ fun PullToRefreshHorizontalDataTable(
             fixedColumnModifier = fixedColumnModifier,
             biDirectionTableWidth = biDirectionTableWidth,
             biDirectionTableModifier = biDirectionTableModifier,
-            biDirectionTableGriCells = biDirectionTableGriCells,
             rowCount = rowCount,
             columnCount = columnCount,
             cellHeight = cellHeight,
             cells = cells,
+            headerHeight = headerHeight,
+            fixedHeaders = fixedHeaders
         )
     }
 }
 
 @Composable
 fun ScrollSyncNotification(
-    columnCount: Int,
-    lazyListState: LazyListState,
-    lazyGridState: LazyGridState
+    lazyFixedColumnState: LazyListState,
+    lazyBiDirectionColumnState: LazyListState
 ) {
-    LaunchedEffect(lazyListState.firstVisibleItemScrollOffset) {
-        if (!lazyGridState.isScrollInProgress) {
+    LaunchedEffect(lazyFixedColumnState.firstVisibleItemScrollOffset) {
+        if (!lazyBiDirectionColumnState.isScrollInProgress) {
 
-            val rowIndex = (lazyListState.firstVisibleItemIndex * (columnCount - 1)) + 1
+            val rowIndex = lazyFixedColumnState.firstVisibleItemIndex
 
-            lazyGridState.scrollToItem(
+            lazyBiDirectionColumnState.scrollToItem(
                 rowIndex,
-                lazyListState.firstVisibleItemScrollOffset
+                lazyFixedColumnState.firstVisibleItemScrollOffset
             )
         }
     }
 
-    LaunchedEffect(lazyGridState.firstVisibleItemScrollOffset) {
-        if (!lazyListState.isScrollInProgress) {
+    LaunchedEffect(lazyBiDirectionColumnState.firstVisibleItemScrollOffset) {
+        if (!lazyFixedColumnState.isScrollInProgress) {
 
-            val colIndex = lazyGridState.firstVisibleItemIndex % (columnCount - 1)
-            val rowIndex = (lazyGridState.firstVisibleItemIndex - colIndex) / (columnCount - 1)
+            val rowIndex = lazyBiDirectionColumnState.firstVisibleItemIndex
 
-            lazyListState.scrollToItem(
+            lazyFixedColumnState.scrollToItem(
                 rowIndex,
-                lazyGridState.firstVisibleItemScrollOffset
+                lazyBiDirectionColumnState.firstVisibleItemScrollOffset
             )
         }
     }

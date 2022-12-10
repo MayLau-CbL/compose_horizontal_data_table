@@ -13,7 +13,10 @@ interface Cells {
     fun totalRows():Int
 
     @Composable
-    fun fixedColumnCells(rowIndex: Int)
+    fun FixedHeaders(colIndex: Int)
+
+    @Composable
+    fun FixedColumnCells(rowIndex: Int)
 
     @Composable
     fun BiDirectionCells(colIndex: Int, rowIndex: Int)
