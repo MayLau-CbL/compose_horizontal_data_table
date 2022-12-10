@@ -3,17 +3,16 @@ package cbl.tools.compose.horizontaldatatable
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import cbl.tools.compose.horizontaldatatable.ui.theme.HorizontalDataTableTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,50 +25,45 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    (Scaffold {
+                    val navController = rememberNavController()
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = { Text("Example") },
+                                navigationIcon = {
+                                    IconButton(
+                                        onClick = {
+                                            navController.navigate("home")
+                                        }) {
+                                        Icon(Icons.Filled.Home, "backIcon")
+                                    }
+                                }
+                            )
+                        }
+                    ) {
                         Box(
                             modifier = Modifier
                                 .padding(paddingValues = it)
                         ) {
-                            @OptIn(ExperimentalFoundationApi::class)
-                            HorizontalDataTable(
-                                fixedColumnWidth = 100.dp,
-                                biDirectionTableWidth = 500.dp,
-                                biDirectionTableGriCells = GridCells.Fixed(5),
-                                columnCount = 6,
-                                rowCount = 100,
-                                cellHeight = 36.dp,
-                            ) { colIndex, rowIndex ->
-                                Cell(colIndex, rowIndex)
+
+                            NavHost(
+                                navController = navController,
+                                startDestination = "home"
+                            ) {
+                                composable("home") {
+                                    HomePage(navController = navController)
+                                }
+                                composable("simple_table") {
+                                    SimpleHorizontalDataTablePage()
+                                }
+                                composable("refresh_table") {
+                                    PullToRefreshHorizontalDataTablePage()
+                                }
                             }
                         }
-                    })
+                    }
                 }
             }
         }
-    }
-
-    @Composable
-    fun Cell(x: Int, y: Int) {
-        Box(
-            modifier = Modifier
-                .height(36.dp)
-                .width(100.dp)
-        ) {
-            Text("($x, $y)")
-        }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    HorizontalDataTableTheme {
-        Greeting("Android")
     }
 }

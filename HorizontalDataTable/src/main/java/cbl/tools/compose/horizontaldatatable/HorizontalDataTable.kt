@@ -1,16 +1,29 @@
 package cbl.tools.compose.horizontaldatatable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.LocalOverScrollConfiguration
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -28,28 +41,16 @@ fun HorizontalDataTable(
     val horizontalScrollState = rememberScrollState()
 
     val lazyColumnState = rememberLazyListState()
-    val lazyGridState = rememberLazyListState()
+    val lazyGridState = rememberLazyGridState()
 
-    LaunchedEffect(lazyColumnState.firstVisibleItemScrollOffset) {
-        if (!lazyGridState.isScrollInProgress) {
-            lazyGridState.scrollToItem(
-                lazyColumnState.firstVisibleItemIndex,
-                lazyColumnState.firstVisibleItemScrollOffset
-            )
-        }
-    }
-
-    LaunchedEffect(lazyGridState.firstVisibleItemScrollOffset) {
-        if (!lazyColumnState.isScrollInProgress) {
-            lazyColumnState.scrollToItem(
-                lazyGridState.firstVisibleItemIndex,
-                lazyGridState.firstVisibleItemScrollOffset
-            )
-        }
-    }
+    ScrollSyncNotification(
+        columnCount = columnCount,
+        lazyListState = lazyColumnState,
+        lazyGridState = lazyGridState
+    )
 
     CompositionLocalProvider(
-        LocalOverScrollConfiguration provides null
+        LocalOverscrollConfiguration provides null
     ) {
         Row {
             LazyColumn(
@@ -64,7 +65,7 @@ fun HorizontalDataTable(
                     }
                 }
             )
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(horizontalScrollState)
@@ -73,7 +74,7 @@ fun HorizontalDataTable(
                     state = lazyGridState,
                     modifier = biDirectionTableModifier
                         .width(biDirectionTableWidth),
-                    cells = biDirectionTableGriCells ?: GridCells.Fixed(count = columnCount),
+                    columns = biDirectionTableGriCells ?: GridCells.Fixed(count = columnCount),
                     content = {
                         items(count = rowCount * (columnCount - 1)) { index ->
                             val colIndex = index % (columnCount - 1)
@@ -85,6 +86,86 @@ fun HorizontalDataTable(
                     }
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun PullToRefreshHorizontalDataTable(
+    refreshing: Boolean = false,
+    onRefresh: () -> Unit,
+    refreshState: PullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = onRefresh,
+        refreshingOffset = 100.dp,
+        refreshThreshold = 100.dp
+    ),
+    indicator: (@Composable () -> Unit)? = null,
+    fixedColumnWidth: Dp,
+    fixedColumnModifier: Modifier = Modifier,
+    biDirectionTableWidth: Dp,
+    biDirectionTableModifier: Modifier = Modifier,
+    biDirectionTableGriCells: GridCells? = null,
+    rowCount: Int,
+    columnCount: Int,
+    cellHeight: Dp,
+    cells: @Composable (colIndex: Int, rowIndex: Int) -> Unit,
+) {
+
+    Box(modifier = Modifier.pullRefresh(refreshState)) {
+        if (indicator != null) {
+            indicator?.invoke()
+        } else {
+            PullRefreshIndicator(
+                refreshing = refreshing,
+                state = refreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
+
+        HorizontalDataTable(
+            fixedColumnWidth = fixedColumnWidth,
+            fixedColumnModifier = fixedColumnModifier,
+            biDirectionTableWidth = biDirectionTableWidth,
+            biDirectionTableModifier = biDirectionTableModifier,
+            biDirectionTableGriCells = biDirectionTableGriCells,
+            rowCount = rowCount,
+            columnCount = columnCount,
+            cellHeight = cellHeight,
+            cells = cells,
+        )
+    }
+}
+
+@Composable
+fun ScrollSyncNotification(
+    columnCount: Int,
+    lazyListState: LazyListState,
+    lazyGridState: LazyGridState
+) {
+    LaunchedEffect(lazyListState.firstVisibleItemScrollOffset) {
+        if (!lazyGridState.isScrollInProgress) {
+
+            val rowIndex = (lazyListState.firstVisibleItemIndex * (columnCount - 1)) + 1
+
+            lazyGridState.scrollToItem(
+                rowIndex,
+                lazyListState.firstVisibleItemScrollOffset
+            )
+        }
+    }
+
+    LaunchedEffect(lazyGridState.firstVisibleItemScrollOffset) {
+        if (!lazyListState.isScrollInProgress) {
+
+            val colIndex = lazyGridState.firstVisibleItemIndex % (columnCount - 1)
+            val rowIndex = (lazyGridState.firstVisibleItemIndex - colIndex) / (columnCount - 1)
+
+            lazyListState.scrollToItem(
+                rowIndex,
+                lazyGridState.firstVisibleItemScrollOffset
+            )
         }
     }
 }
