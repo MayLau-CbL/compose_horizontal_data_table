@@ -59,7 +59,11 @@ fun HorizontalDataTable(
                     .width(fixedColumnWidth),
                 content = {
                     items(count = rowCount) { rowIndex ->
-                        Box(modifier = Modifier.height(cellHeight)) {
+                        Box(
+                            modifier = Modifier
+                                .height(cellHeight),
+                            contentAlignment = Alignment.Center,
+                        ) {
                             cells(0, rowIndex)
                         }
                     }
@@ -74,12 +78,16 @@ fun HorizontalDataTable(
                     state = lazyGridState,
                     modifier = biDirectionTableModifier
                         .width(biDirectionTableWidth),
-                    columns = biDirectionTableGriCells ?: GridCells.Fixed(count = columnCount),
+                    columns = biDirectionTableGriCells
+                        ?: GridCells.Fixed(count = (columnCount - 1)),
                     content = {
                         items(count = rowCount * (columnCount - 1)) { index ->
                             val colIndex = index % (columnCount - 1)
                             val rowIndex = (index - colIndex) / (columnCount - 1)
-                            Box(modifier = Modifier.height(cellHeight)) {
+                            Box(
+                                modifier = Modifier.height(cellHeight),
+                                contentAlignment = Alignment.Center,
+                            ) {
                                 cells(colIndex + 1, rowIndex)
                             }
                         }
