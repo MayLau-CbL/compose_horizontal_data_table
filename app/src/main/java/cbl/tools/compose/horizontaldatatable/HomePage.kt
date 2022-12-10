@@ -29,7 +29,7 @@ fun HomePage(navController: NavController) {
         Button(onClick = {
             navController.navigate("refresh_table")
         }) {
-            Text("Simple Table")
+            Text("Refresh Table")
         }
     }
 }
