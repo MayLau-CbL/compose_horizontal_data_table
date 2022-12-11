@@ -23,6 +23,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * [HorizontalDataTable] is the base table with fixed column and fixed header option.
+ * This table consists of two [LazyColumn] with synchronized scrolling.
+ *
+ * [fixedColumnWidth] is the left hand side fixed part width.
+ * [fixedColumnModifier] allows customizing fixed column's [Modifier].
+ * [biDirectionTableWidth] is the right hand side bi-direction part width.
+ * [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
+ *
+ * [headerHeight] is the fixed header height which is nullable.
+ * [fixedHeaders] is the builder for fixed headers' composition which is nullable.
+ * To enable fixed header feature requires [headerHeight] and [fixedHeaders] to be non-null and not empty.
+ *
+ * [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
+ *
+ * [rowCount] is the total row numbers.
+ * [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
+ * [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
+ * [cells] is the builder for the cells.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HorizontalDataTable(
@@ -170,6 +190,31 @@ fun HorizontalDataTable(
     }
 }
 
+/**
+ * [PullToRefreshHorizontalDataTable] includes pull to refresh feature to table.
+ * The pull to refresh feature is using Material library default pull refresh feature.
+ *
+ * [refreshing] indicates refresh status.
+ * [onRefresh] is callback for onRefresh state.
+ * [refreshState] is to remeber the current refresh state.
+ * [indicator] is a composable for refresh indicator
+ *
+ * [fixedColumnWidth] is the left hand side fixed part width.
+ * [fixedColumnModifier] allows customizing fixed column's [Modifier].
+ * [biDirectionTableWidth] is the right hand side bi-direction part width.
+ * [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
+ *
+ * [headerHeight] is the fixed header height which is nullable.
+ * [fixedHeaders] is the builder for fixed headers' composition which is nullable.
+ * To enable fixed header feature requires [headerHeight] and [fixedHeaders] to be non-null and not empty.
+ *
+ * [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
+ *
+ * [rowCount] is the total row numbers.
+ * [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
+ * [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
+ * [cells] is the builder for the cells.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PullToRefreshHorizontalDataTable(
@@ -222,6 +267,9 @@ fun PullToRefreshHorizontalDataTable(
     }
 }
 
+/**
+ * [ScrollSyncNotification] is a composable managing the synchronized scrolling state of the two [LazyColumn].
+ */
 @Composable
 fun ScrollSyncNotification(
     lazyFixedColumnState: LazyListState,

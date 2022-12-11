@@ -6,6 +6,9 @@ import androidx.compose.material.AppBarDefaults
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Ext of LazyListState for calculating the scroll elevation
+ */
 val LazyListState.elevation: Dp
     get() = if (firstVisibleItemIndex == 0) {
         minOf(firstVisibleItemScrollOffset.toFloat().dp, AppBarDefaults.TopAppBarElevation)
@@ -13,9 +16,15 @@ val LazyListState.elevation: Dp
         AppBarDefaults.TopAppBarElevation
     }
 
+/**
+ * Ext of LazyListState for calculating the alpha of elevation color
+ */
 val LazyListState.elevationPortion: Float
     get() = elevation.div(AppBarDefaults.TopAppBarElevation)
 
+/**
+ * Ext of ScrollState for calculating the scroll elevation
+ */
 val ScrollState.elevation: Dp
     get() = if (value > 0) {
         minOf(value.toFloat().dp, AppBarDefaults.TopAppBarElevation)
@@ -23,5 +32,8 @@ val ScrollState.elevation: Dp
         0.dp
     }
 
+/**
+ * Ext of ScrollState for calculating the alpha of elevation color
+ */
 val ScrollState.elevationPortion: Float
     get() = elevation.div(AppBarDefaults.TopAppBarElevation)
