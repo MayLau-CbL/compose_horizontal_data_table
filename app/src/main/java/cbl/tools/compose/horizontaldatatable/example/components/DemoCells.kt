@@ -1,4 +1,4 @@
-package cbl.tools.compose.horizontaldatatable.components
+package cbl.tools.compose.horizontaldatatable.example.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width

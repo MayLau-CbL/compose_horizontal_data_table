@@ -1,4 +1,4 @@
-package cbl.tools.compose.horizontaldatatable.ui.theme
+package cbl.tools.compose.horizontaldatatable.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

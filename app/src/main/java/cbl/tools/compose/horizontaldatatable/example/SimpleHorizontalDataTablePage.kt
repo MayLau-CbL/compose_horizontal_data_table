@@ -1,8 +1,9 @@
-package cbl.tools.compose.horizontaldatatable
+package cbl.tools.compose.horizontaldatatable.example
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import cbl.tools.compose.horizontaldatatable.components.Cells
+import cbl.tools.compose.horizontaldatatable.HorizontalDataTable
+import cbl.tools.compose.horizontaldatatable.example.components.Cells
 
 @Composable
 fun SimpleHorizontalDataTablePage(cells: Cells) {

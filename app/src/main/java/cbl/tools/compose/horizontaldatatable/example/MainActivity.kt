@@ -1,4 +1,4 @@
-package cbl.tools.compose.horizontaldatatable
+package cbl.tools.compose.horizontaldatatable.example
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cbl.tools.compose.horizontaldatatable.components.DemoCells
-import cbl.tools.compose.horizontaldatatable.ui.theme.HorizontalDataTableTheme
+import cbl.tools.compose.horizontaldatatable.example.components.DemoCells
+import cbl.tools.compose.horizontaldatatable.example.ui.theme.HorizontalDataTableTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

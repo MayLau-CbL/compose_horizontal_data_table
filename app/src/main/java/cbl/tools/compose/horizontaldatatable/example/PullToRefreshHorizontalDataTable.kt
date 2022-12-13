@@ -1,4 +1,4 @@
-package cbl.tools.compose.horizontaldatatable
+package cbl.tools.compose.horizontaldatatable.example
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
@@ -6,7 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.unit.dp
-import cbl.tools.compose.horizontaldatatable.components.Cells
+import cbl.tools.compose.horizontaldatatable.PullToRefreshHorizontalDataTable
+import cbl.tools.compose.horizontaldatatable.example.components.Cells
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'cbl.tools.compose.horizontaldatatable'
+    namespace 'cbl.tools.compose.horizontaldatatable.example'
     compileSdk 33
 
     defaultConfig {
-        applicationId "cbl.tools.compose.horizontaldatatable"
+        applicationId "cbl.tools.compose.horizontaldatatable.example"
         minSdk 23
         targetSdk 33
         versionCode 1

@@ -1,4 +1,4 @@
-package cbl.tools.compose.horizontaldatatable
+package cbl.tools.compose.horizontaldatatable.example
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

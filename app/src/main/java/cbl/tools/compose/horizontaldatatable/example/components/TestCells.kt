@@ -1,4 +1,4 @@
-package cbl.tools.compose.horizontaldatatable.components
+package cbl.tools.compose.horizontaldatatable.example.components
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
