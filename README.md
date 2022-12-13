@@ -40,7 +40,7 @@ HorizontalDataTable(
 
 2. Add the dependency
 ```
-    implementation 'com.github.MayLau-CbL:compose_horizontal_data_table:Tag'
+    implementation 'com.github.MayLau-CbL:compose_horizontal_data_table:{package version}'
 ```
 
 ## Example
