@@ -6,35 +6,11 @@ This is inspired by the [flutter_horizontal_data_table](https://github.com/MayLa
 
 ## Usage
 This shows Widget's full customizations:
+
 ### Simple Table
 ```kotlin
 HorizontalDataTable(
-    fixedColumnWidth: Dp,
-    fixedColumnModifier: Modifier = Modifier,
-    biDirectionTableWidth: Dp,
-    biDirectionTableModifier: Modifier = Modifier,
-    headerHeight: Dp? = null,
-    fixedHeaders: (@Composable (colIndex: Int) -> Unit)? = null,
-    elevationColor: Color = Color(0xEFEFEFEF),
-    rowCount: Int,
-    columnCount: Int,
-    cellHeight: Dp,
-    cells: @Composable (colIndex: Int, rowIndex: Int) -> Unit,
-)
-```
-
-### With Pull to Refresh Function
-```kotlin
-PullToRefreshHorizontalDataTable(
-    refreshing: Boolean = false,
-    onRefresh: () -> Unit,
-    refreshState: PullRefreshState = rememberPullRefreshState(
-        refreshing = refreshing,
-        onRefresh = onRefresh,
-        refreshingOffset = 100.dp,
-        refreshThreshold = 100.dp
-    ),
-    indicator: (@Composable () -> Unit)? = null,
+    refreshInfo: RefreshInfo? = null,
     fixedColumnWidth: Dp,
     fixedColumnModifier: Modifier = Modifier,
     biDirectionTableWidth: Dp,

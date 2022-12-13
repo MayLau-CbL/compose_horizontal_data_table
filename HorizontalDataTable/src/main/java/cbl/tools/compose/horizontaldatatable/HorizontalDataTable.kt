@@ -22,30 +22,101 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import cbl.tools.compose.horizontaldatatable.refresh.RefreshInfo
 
 /**
  * [HorizontalDataTable] is the base table with fixed column and fixed header option.
  * This table consists of two [LazyColumn] with synchronized scrolling.
  *
- * [fixedColumnWidth] is the left hand side fixed part width.
- * [fixedColumnModifier] allows customizing fixed column's [Modifier].
- * [biDirectionTableWidth] is the right hand side bi-direction part width.
- * [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
+ * @param [refreshInfo] holds refresh related information.
+ * @see [RefreshInfo]
  *
- * [headerHeight] is the fixed header height which is nullable.
- * [fixedHeaders] is the builder for fixed headers' composition which is nullable.
+ * @param [fixedColumnWidth] is the left hand side fixed part width.
+ * @param [fixedColumnModifier] allows customizing fixed column's [Modifier].
+ * @param [biDirectionTableWidth] is the right hand side bi-direction part width.
+ * @param [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
+ *
+ * @param [headerHeight] is the fixed header height which is nullable.
+ * @param [fixedHeaders] is the builder for fixed headers' composition which is nullable.
  * To enable fixed header feature requires [headerHeight] and [fixedHeaders] to be non-null and not empty.
  *
- * [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
+ * @param [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
  *
- * [rowCount] is the total row numbers.
- * [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
- * [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
- * [cells] is the builder for the cells.
+ * @param [rowCount] is the total row numbers.
+ * @param [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
+ * @param [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
+ * @param [cells] is the builder for the cells.
+ */
+@Composable
+fun HorizontalDataTable(
+    refreshInfo: RefreshInfo? = null,
+    fixedColumnWidth: Dp,
+    fixedColumnModifier: Modifier = Modifier,
+    biDirectionTableWidth: Dp,
+    biDirectionTableModifier: Modifier = Modifier,
+    headerHeight: Dp? = null,
+    fixedHeaders: (@Composable (colIndex: Int) -> Unit)? = null,
+    elevationColor: Color = Color(0xEFEFEFEF),
+    rowCount: Int,
+    columnCount: Int,
+    cellHeight: Dp,
+    cells: @Composable (colIndex: Int, rowIndex: Int) -> Unit,
+) {
+    if (refreshInfo != null) {
+        PullToRefreshHorizontalDataTable(
+            refreshInfo = refreshInfo,
+            fixedColumnWidth = fixedColumnWidth,
+            fixedColumnModifier = fixedColumnModifier,
+            biDirectionTableWidth = biDirectionTableWidth,
+            biDirectionTableModifier = biDirectionTableModifier,
+            rowCount = rowCount,
+            columnCount = columnCount,
+            cellHeight = cellHeight,
+            cells = cells,
+            headerHeight = headerHeight,
+            fixedHeaders = fixedHeaders,
+            elevationColor = elevationColor,
+        )
+    } else {
+        BaseHorizontalDataTable(
+            fixedColumnWidth = fixedColumnWidth,
+            fixedColumnModifier = fixedColumnModifier,
+            biDirectionTableWidth = biDirectionTableWidth,
+            biDirectionTableModifier = biDirectionTableModifier,
+            rowCount = rowCount,
+            columnCount = columnCount,
+            cellHeight = cellHeight,
+            cells = cells,
+            headerHeight = headerHeight,
+            fixedHeaders = fixedHeaders,
+            elevationColor = elevationColor,
+        )
+    }
+}
+
+/**
+ * [HorizontalDataTable] is the base table with fixed column and fixed header option.
+ * This table consists of two [LazyColumn] with synchronized scrolling.
+ *
+ * @param [fixedColumnWidth] is the left hand side fixed part width.
+ * @param [fixedColumnModifier] allows customizing fixed column's [Modifier].
+ * @param [biDirectionTableWidth] is the right hand side bi-direction part width.
+ * @param [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
+ *
+ * @param [headerHeight] is the fixed header height which is nullable.
+ * @param [fixedHeaders] is the builder for fixed headers' composition which is nullable.
+ * To enable fixed header feature requires [headerHeight] and [fixedHeaders] to be non-null and not empty.
+ *
+ * @param [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
+ *
+ * @param [rowCount] is the total row numbers.
+ * @param [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
+ * @param [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
+ * @param [cells] is the builder for the cells.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalDataTable(
+fun BaseHorizontalDataTable(
     fixedColumnWidth: Dp,
     fixedColumnModifier: Modifier = Modifier,
     biDirectionTableWidth: Dp,
@@ -194,39 +265,29 @@ fun HorizontalDataTable(
  * [PullToRefreshHorizontalDataTable] includes pull to refresh feature to table.
  * The pull to refresh feature is using Material library default pull refresh feature.
  *
- * [refreshing] indicates refresh status.
- * [onRefresh] is callback for onRefresh state.
- * [refreshState] is to remeber the current refresh state.
- * [indicator] is a composable for refresh indicator
+ * @param [refreshInfo] holds refresh related information.
+ * @see [RefreshInfo]
  *
- * [fixedColumnWidth] is the left hand side fixed part width.
- * [fixedColumnModifier] allows customizing fixed column's [Modifier].
- * [biDirectionTableWidth] is the right hand side bi-direction part width.
- * [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
+ * @param [fixedColumnWidth] is the left hand side fixed part width.
+ * @param [fixedColumnModifier] allows customizing fixed column's [Modifier].
+ * @param [biDirectionTableWidth] is the right hand side bi-direction part width.
+ * @param [biDirectionTableModifier] allows customizing bi-direction columns' [Modifier].
  *
- * [headerHeight] is the fixed header height which is nullable.
- * [fixedHeaders] is the builder for fixed headers' composition which is nullable.
+ * @param [headerHeight] is the fixed header height which is nullable.
+ * @param [fixedHeaders] is the builder for fixed headers' composition which is nullable.
  * To enable fixed header feature requires [headerHeight] and [fixedHeaders] to be non-null and not empty.
  *
- * [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
+ * @param [elevationColor] is color of the elevation area. Default is #EFEFEFEF.
  *
- * [rowCount] is the total row numbers.
- * [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
- * [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
- * [cells] is the builder for the cells.
+ * @param [rowCount] is the total row numbers.
+ * @param [columnCount] is the total column numbers. fixed column number(1) + bi-direction columns numbers(n)
+ * @param [cellHeight] is the cell and row height. If cell has smaller height than the row, cell will center vertically.
+ * @param [cells] is the builder for the cells.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PullToRefreshHorizontalDataTable(
-    refreshing: Boolean = false,
-    onRefresh: () -> Unit,
-    refreshState: PullRefreshState = rememberPullRefreshState(
-        refreshing = refreshing,
-        onRefresh = onRefresh,
-        refreshingOffset = 100.dp,
-        refreshThreshold = 100.dp
-    ),
-    indicator: (@Composable () -> Unit)? = null,
+    refreshInfo: RefreshInfo,
     fixedColumnWidth: Dp,
     fixedColumnModifier: Modifier = Modifier,
     biDirectionTableWidth: Dp,
@@ -240,18 +301,25 @@ fun PullToRefreshHorizontalDataTable(
     cells: @Composable (colIndex: Int, rowIndex: Int) -> Unit,
 ) {
 
+    val refreshState: PullRefreshState = rememberPullRefreshState(
+        refreshing = refreshInfo.refreshing,
+        onRefresh = refreshInfo.onRefresh,
+        refreshingOffset = refreshInfo.refreshingOffset,
+        refreshThreshold = refreshInfo.refreshThreshold
+    )
+
     Box(modifier = Modifier.pullRefresh(refreshState)) {
-        if (indicator != null) {
-            indicator?.invoke()
+        if (refreshInfo.indicator != null) {
+            refreshInfo.indicator?.invoke()
         } else {
             PullRefreshIndicator(
-                refreshing = refreshing,
+                refreshing = refreshInfo.refreshing,
                 state = refreshState,
                 modifier = Modifier.align(Alignment.TopCenter)
             )
         }
 
-        HorizontalDataTable(
+        BaseHorizontalDataTable(
             fixedColumnWidth = fixedColumnWidth,
             fixedColumnModifier = fixedColumnModifier,
             biDirectionTableWidth = biDirectionTableWidth,
