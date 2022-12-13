@@ -1,5 +1,7 @@
 # compose_horizontal_data_table
 
+[![](https://jitpack.io/v/MayLau-CbL/compose_horizontal_data_table.svg)](https://jitpack.io/#MayLau-CbL/compose_horizontal_data_table)
+
 An Android Compose that create a horizontal table with fixed first column.
 
 This is inspired by the [flutter_horizontal_data_table](https://github.com/MayLau-CbL/flutter_horizontal_data_table) which using Android Compose to implement the table. This kind of table should be able to implement via a recycler view. The reason I make this aims to ease the development with pure compose UI implementation. 
